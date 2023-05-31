@@ -1,0 +1,383 @@
+<?php
+session_start();
+if(isset($_SESSION['name'])){
+echo $_SESSION['name'];
+}else{
+header("location:login.php");
+}
+?>
+
+<div align='center'>
+
+<section style='width:40%;border:2px solid black;'>
+<h1>مرحبا بك اختار نوع الوجلبه</h1>
+<?php
+$con=mysqli_connect("localhost","root","","restreent");
+
+$quer= "select * from meal";
+
+$sel= mysqli_query($con,$quer);
+while($row=mysqli_fetch_array($sel)){
+?>
+</tr>
+<tr>
+<a href="food.php?id=<?php echo $row['id_m']; ?>"><h3><?php echo $row['name_m']; ?></h3>
+</a></tr>
+<?php
+}
+?>
+</section>
+</div>
+////////////////////////////////////////////////////////
+
+ 
+
+<?php
+$id=$_GET['id'];
+$con=mysqli_connect("localhost","root","","restreent");
+
+?>
+<body dir='rtl'>
+<h1 align='center'><a href='home.php'>
+رجوع
+</a></h1>
+<h1 align='center'><a href='mybasked.php'>
+سلتي
+</a></h1>
+
+<div align='center'>
+
+<table border=2>
+<tr>
+<td>الاسم</td>
+<td>السعر</td>
+<td>meal</td>
+<?php
+$quer= "select * from food where id_m='$id'";
+$sel= mysqli_query($con,$quer);
+while($row=mysqli_fetch_array($sel)){
+?>
+</tr>
+<tr>
+<td><?php echo $row['name_f']; ?></td>
+<td><?php echo $row['price']; ?></td>
+<td><?php echo $row['id_m']; ?></td>
+<td><a href="add_basked.php?id=<?php echo $row['id_f']; ?>&&price=<?php echo $row['price']; ?>&&id_m=<?php echo $row['id_m']; ?>">ِشراء</a></td>
+</tr>
+<?php
+}
+?>
+</table>
+</div>
+////////////////////////////////////////////////////////
+
+ 
+
+session_start();
+$id_f=$_GET['id'];
+$id_m=$_GET['id_m'];
+$price=$_GET['price'];
+
+if(isset($_SESSION['name'])){
+$uname= $_SESSION['name'];
+}else{
+
+header("location:food.php");
+}
+include"mang/connect.php";
+?>
+
+<div align='center'>
+
+<form method='post' action="">
+الكميه المطلوبه
+<br>
+<input type="number" name='intake' required><br>
+<button type='submit' name='add'>اكمال عملية الشراء</button>
+</form>
+<?php
+if(isset($_POST['add'])){
+
+$intake=$_POST['intake'];
+$tot=$price*$intake;
+$query = "INSERT INTO basked(id_f,pric, intake,total,id_u) VALUES
+('$id_f','$price','$intake','$tot','$uname')";
+$result= mysqli_query($con,$query);
+if( $result){
+header("location:food.php?id=$id_m");
+
+}
+}
+?></div>
+///////////////////////////////////////////////////////////
+
+ 
+
+<?php
+session_start();
+
+if(isset($_SESSION['name'])){
+$uname= $_SESSION['name'];
+}else{
+
+header("location:food.php");
+}
+include"mang/connect.php";
+
+//$con=mysqli_connect("localhost","root","","restreent");
+
+?>
+<body dir='rtl'>
+<h1 align='center'><a href='home.php'>
+رجوع
+</a></h1>
+<h1 align='center'><a href='mybasked.php'>
+سلتي
+</a></h1>
+
+<div align='center'>
+
+<table border=2>
+<tr>
+<td>الوجبه</td>
+<td>السعر</td>
+<td>الكميه</td>
+<td>المجموع</td>
+<td>الوقت</td>
+<?php
+$quer= "select * from basked where id_u='$uname'";
+$sel= mysqli_query($con,$quer);
+while($row=mysqli_fetch_array($sel)){
+?>
+</tr>
+<tr>
+<td><?php echo $row['id_f']; ?></td>
+<td><?php echo $row['pric']; ?></td>
+<td><?php echo $row['intake']; ?></td>
+<td><?php echo $row['total']; ?></td>
+<td><?php echo $row['time']; ?></td>
+<td><a href="add_basked.php?id=<?php echo $row['b_id']; ?>">الغاء</a></td>
+</tr>
+<?php
+}
+?>
+</table>
+</div>
+
+/////////////////////////////////////////////////////
+
+ 
+
+<?php
+session_start();
+if(isset($_POST['log'])){
+//$con=new mysqli("localhost","root","root","pic");
+$con=mysqli_connect("localhost","root","","restreent");
+$name=$_POST['name'];
+$pass=$_POST['pass'];
+$sel="select * from users where email='$name' and password='$pass'";
+$s=mysqli_query($con,$sel);
+$row_cou=mysqli_num_rows($s);
+if($s){
+if($row_cou==1) {
+$r=mysqli_fetch_array($s);
+$_SESSION['name']=$r['id_u'];
+header('Location:index.php');
+}
+else{
+header('Location:login.php?messg=خطا في اسم المستخدم او كلمة المرور');
+}
+}else{
+die(mysqli_error($con));
+}
+}
+?><br>
+
+ 
+
+?>
+<html>
+<link rel="stylesheet" href="css/bootstrap.min.css">
+
+
+<script src="js/مكتبة22.js"></script>
+<script src="js/bootstrap.min.js"></script>
+
+<head>
+<meta charset="utf-8">
+
+<style>
+form{
+
+border:2px solid #323f45;
+padding:6%;
+}
+body{
+
+background-color:#f5f2f0;
+}
+
+ 
+
+</style>
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="css/bootstrap.min.css">
+<script src="js/jjjjj.js"></script>
+
+<link rel="stylesheet" href="css/styleshow.css">
+<script src="js/jjjjj.js"></script>
+
+<script src="js/bootstrap.min.js"></script>
+<script src="js/jjjjj.js"></script>
+</head>
+
+<body >
+<div class="container">
+
+<div class="row">
+
+<div class="col-md-3">
+</div >
+<div align="center" class="col-md-6">
+
+<form action="" method="post" class="mt-5 mb-5 login-input">
+<div class="input-group">
+
+<h1>تسجيل الدخول</h1>
+
+<!--<h1><big><big><big><div style="width:50%;ذ" class="glyphicon glyphicon-lock glyphicon-lrg"></div></big></big></big></h1>
+-->
+<div class="card-input-container username">
+</hr>
+
+<div style="color: red"> <?php if(isset($_GET['messg'])) echo $_GET['messg']; ?></div>
+<div style="color: green"> <?php if(isset($_GET['mesg'])) echo $_GET['mesg']; ?></div>
+
+<input type='email' class="form-control" name='name' placeholder="user name" required></i>
+</hr>
+<div class="card-input-container password">
+
+<input type='password' placeholder="Password" class="form-control" name='pass' required>
+</div>
+</hr>
+<br/>
+<button name='log' type='submit' class="btn btn-success">دخول</button>
+
+</div>
+<br>
+<a href='Html.html'>حساب جديد</a>
+</form>
+</div></div>
+</div>
+</body>
+</html>
+/////////////////////////////////////////////////////////
+
+ 
+
+<html>
+<head>
+<title>تسجيل حساب جديد</title>
+</head>
+<body align="center">
+
+<form action=PHP.php method=post>
+الاسم:<input type=text name=name><br>
+
+الهاتف:<input type=tel name=phone><br>
+العنوان:<input type=text name=address><br>
+الايميل:<input type=email name=email><br>
+<br>
+
+كلمة السر <br><input type=password name=pass><br>
+المحافظه
+<select name="c">
+<option value="Nablus ">Nablus </option>
+<option value="Jenin">Jenin</option>
+<option value="Ramallah ">Ramallah </option>
+<option value="Tulkarm ">Tulkarm </option>
+<option value="Jerusalem">Jerusalem</option>
+
+</select><br>
+<button type="submit">حفظ</button>
+</form>
+</br>
+
+</body>
+</html>
+////////////////////////////////////////////////////////////
+
+
+<?php
+
+$con=mysqli_connect("localhost","root","","restreent");
+
+
+?><?php
+
+$name=$_POST['name'];
+$phone=$_POST['phone'];
+$address=$_POST['address'];
+$email=$_POST['email'];
+$pass=$_POST['pass'];
+$c=$_POST['c'];
+$query = "INSERT INTO users(name,phone, address, email,password, cit) VALUES
+('$name'
+,'$phone'
+,'$address'
+,'$email'
+,'$pass'
+,'$c'
+
+)";
+$result= mysqli_query($con,$query);
+if( $result){
+header("location:login.php");
+}else{
+die(mysqli_error($con));
+}
+?>
+/////////////////////////////////////////////////////////
+
+
+CREATE TABLE `basked` (
+`b_id` int(11) NOT NULL,
+`id_f` int(11) NOT NULL,
+`pric` varchar(99) NOT NULL,
+`intake` varchar(99) NOT NULL,
+`total` varchar(99) NOT NULL,
+`id_u` int(11) NOT NULL,
+`time` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/////////////////////////////////////////////////////////////
+
+
+CREATE TABLE `meal` (
+`id_m` int(11) NOT NULL,
+`name_m` varchar(99) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/////////////////////////////////////////////////////////
+
+
+CREATE TABLE `food` (
+`id_f` int(11) NOT NULL,
+`name_f` varchar(77) NOT NULL,
+`price` text NOT NULL,
+`id_m` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+//////////////////////////////////////////////////////////
+
+
+CREATE TABLE `users` (
+`id_u` int(11) NOT NULL,
+`name` varchar(200) NOT NULL,
+`phone` varchar(44) NOT NULL,
+`address` varchar(55) NOT NULL,
+`email` varchar(33) NOT NULL,
+`password` varchar(20) NOT NULL,
+`cit` varchar(66) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
